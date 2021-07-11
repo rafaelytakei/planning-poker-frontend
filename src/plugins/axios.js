@@ -5,6 +5,6 @@ export default {
     customAxios.interceptors.response.use((response) => {
       return response.data
     })
-    app.provide('$axios', customAxios)
+    app.config.globalProperties.$axios = customAxios
   },
 }
