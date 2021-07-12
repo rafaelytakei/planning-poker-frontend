@@ -83,6 +83,7 @@ $atlassianApi.interceptors.response.use(
       Cookies.set('atlassian_token', newTokens.access_token, {
         expires: 1 / 24,
       })
+      $atlassianApi.defaults.headers.Authorization = `Bearer ${newTokens.access_token}`
       if (newTokens.refresh_token) {
         Cookies.set('atlassian_refresh_token', newTokens.refresh_token)
       }
@@ -123,15 +124,33 @@ export const getProjects = async () => {
 }
 
 export const getIssues = async (projectKey) => {
+  const sprintKey = await getSprintKey()
+
   const [err, res] = await to(
     $atlassianApi.get('/rest/api/3/search', {
       params: {
-        jql: 'project = "MNP" AND sprint = "Sprint 16"',
+        jql: `project = "${projectKey}" AND sprint not in closedSprints()`,
+        fields: `${sprintKey}, status, summary, description`,
+        maxResults: 1000,
       },
     })
   )
   if (err) {
     throw new Error('Error loading projects')
   }
-  return res
+  return { issues: res.issues, sprintKey }
+}
+
+export const getSprintKey = async () => {
+  const [fieldsErr, fields] = await to($atlassianApi.get('/rest/api/3/field'))
+  if (fieldsErr) {
+    throw new Error('Error loading JIRA fields')
+  }
+  console.log(fields)
+  for (const field of fields) {
+    if (field.name.toLowerCase() === 'sprint') {
+      return field.key
+    }
+  }
+  throw new Error('Error finding sprint key')
 }
