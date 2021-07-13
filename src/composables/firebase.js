@@ -1,5 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
+import 'firebase/firestore'
 import { ref } from 'vue'
 
 const firebaseConfig = {
@@ -10,6 +11,7 @@ const firebaseConfig = {
   messagingSenderId: '854504189677',
   appId: '1:854504189677:web:81a3af7e4438fb82b9e6e4',
   measurementId: 'G-QPMTB1WC75',
+  databaseURL: 'https://planning-poker-ad3de-default-rtdb.firebaseio.com/',
 }
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig)

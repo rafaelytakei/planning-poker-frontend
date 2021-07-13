@@ -1,0 +1,8 @@
+{
+  "name": "Nome do round",
+  "jira": {
+    "issue": "XXX-123"
+  },
+  "status": "active", // Possible status: 'pending', 'active', 'completed'
+  "users"
+}

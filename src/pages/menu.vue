@@ -7,16 +7,17 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { logout, user } from '~/composables/firebase'
+import { createGame } from '~/composables/game'
 
 const router = useRouter()
 
-const handleLogout = async () => {
-  await logout()
-  router.push('/login')
-}
-const createNewGame = () => {
+const createNewGame = async () => {
+  const newGameId = await createGame('Test Game')
   router.push({
-    path: '/game/new',
+    path: '/game/edit',
+    query: {
+      id: newGameId,
+    },
   })
 }
 </script>
