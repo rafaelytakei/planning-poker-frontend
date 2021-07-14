@@ -1,6 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import 'firebase/firestore'
+import 'firebase/database'
 import { ref } from 'vue'
 
 const firebaseConfig = {
@@ -20,8 +20,16 @@ if (!firebase.apps.length) {
 }
 export const user = ref(null)
 export const initialized = ref(false)
-const firebaseAuth = firebase.auth()
+export const firebaseAuth = firebase.auth()
 
+export const getUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
+      unsubscribe()
+      resolve(user)
+    }, reject)
+  })
+}
 firebaseAuth.onAuthStateChanged((u) => {
   initialized.value = true
   user.value = u

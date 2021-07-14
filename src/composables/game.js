@@ -1,28 +1,113 @@
 import { firebase, user } from './firebase'
 import to from 'await-to-js'
-const db = firebase.firestore()
+export const db = firebase.database()
 
-export const createGame = async (gameName = 'Untitled') => {
-  const [err, res] = await to(
-    db.collection('games').add({
-      name: gameName,
-      rounds: [],
-      admins: [user.value.uid],
-      activeUsers: [],
-    })
-  )
-  if (err) {
-    console.log('Error creating a new game', err)
-    return
+export const cardSets = {
+  Fibonacci: ['1', '2', '3', '5', '8', '13', '21', '34', '55', '89'],
+  'Multiples of 2': ['1', '2', '4', '8', '16', '32', '64', '128'],
+}
+export const createGame = async (
+  gameName = 'Untitled',
+  cards = cardSets.Fibonacci
+) => {
+  const newGame = {
+    name: gameName,
+    users: [],
+    rounds: [],
+    admins: [user.value.uid],
+    cards,
   }
-  return res.id
+  const newGameKey = db.ref().child('games').push(newGame).key
+  return newGameKey
 }
 
 export const getGameInfo = async (gameId) => {
-  const [err, res] = await to(db.collection('games').doc(gameId).get())
+  const [err, snapshot] = await to(db.ref().child(`games/${gameId}`).get())
   if (err) {
     console.log('Error loading game info', err)
     return
   }
-  return res
+  if (snapshot.exists()) {
+    return snapshot.val()
+  } else {
+    console.log(`No data available for game ${gameId}`)
+    return
+  }
+}
+
+export const connectUserToGame = async (gameId, userUid) => {
+  const userInGame = await isUserInGame(gameId, userUid)
+  if (userInGame) return
+  const newUserRef = db.ref(`games/${gameId}/users/`).push()
+  const [err] = await to(newUserRef.set(userUid))
+  if (err) {
+    console.log('Error adding user to game')
+    return
+  }
+  console.log('user added to game successfully')
+  newUserRef.onDisconnect().remove()
+}
+
+const isUserInGame = async (gameId, userUid) => {
+  const usersRef = db.ref(`games/${gameId}/users`)
+  const [err, snapshot] = await to(usersRef.get())
+  if (err) {
+    console.log('Error retrieving users in game')
+    return
+  }
+  if (!snapshot.exists()) return false
+  const values = Object.values(snapshot.val())
+  if (values.includes(userUid)) {
+    console.log('User is already in the game')
+    return true
+  }
+
+  return false
+}
+
+export const addMultipleRoundsToGame = async (gameId, roundsInfo) => {
+  const gameRoundsRef = db.ref(`/games/${gameId}/rounds`)
+  const [getRoundsErr, snapshot] = await to(gameRoundsRef.get())
+  if (getRoundsErr) {
+    console.log(`Error loading rounds from game ${gameId}`)
+    return
+  }
+  let nextRoundOrder = 0
+  if (snapshot.exists()) {
+    console.log(snapshot.val())
+    nextRoundOrder = Object.keys(snapshot.val()).length
+  }
+  const roundsInfoWithOrder = roundsInfo.map((roundInfo) => {
+    return {
+      order: nextRoundOrder++,
+      ...roundInfo,
+    }
+  })
+
+  for (const roundInfo of roundsInfoWithOrder) {
+    await addRoundToGame(gameId, roundInfo)
+  }
+}
+export const addRoundToGame = async (gameId, roundInfo) => {
+  const gameRoundsRef = db.ref(`/games/${gameId}/rounds`)
+
+  const newRoundRef = gameRoundsRef.push()
+  const [err] = await to(newRoundRef.set(roundInfo))
+  if (err) {
+    console.log('Error adding round to game')
+    return
+  }
+}
+
+export const changeRoundsOrder = (
+  gameId,
+  roundAId,
+  roundBId,
+  newRoundAOrder,
+  newRoundBOrder
+) => {
+  const updates = {}
+  updates[`${roundAId}/order`] = newRoundAOrder
+  updates[`${roundBId}/order`] = newRoundBOrder
+  db.ref(`/games/${gameId}/rounds/`).update(updates)
 }

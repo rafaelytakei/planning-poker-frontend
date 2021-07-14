@@ -1,0 +1,12 @@
+{
+  "games": {
+    "game_id1": {
+      "id": "game_id1",
+      "name": "game name",
+      "users": [],
+      "rounds": [],
+      "admins": [],
+      "cards": []
+    }
+  }
+}

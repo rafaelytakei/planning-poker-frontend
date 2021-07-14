@@ -1,7 +1,5 @@
 <template>
   <base-stepper class="w-full" :current-step="currentStep" />
-  <base-button @click="currentStep--">Return step</base-button>
-  <base-button @click="currentStep++">Advance step</base-button>
   <transition name="slide" mode="out-in">
     <div v-if="currentStep === 0" class="flex flex-col align-center">
       <h5 class="text-2xl text-color3 text-center mb-4">
@@ -99,18 +97,23 @@
           </div>
         </div>
       </base-card>
+      <base-button @click="addSelectedIssuesToGame"
+        >Adicionar issues à partida</base-button
+      >
     </div>
   </transition>
 </template>
 
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import {
   getSites,
   getProjects,
   setCloudId,
   getIssues,
 } from '~/composables/atlassian'
+import { addMultipleRoundsToGame } from '~/composables/game'
 import { showLoading } from '~/composables/loading'
 const currentStep = ref(0)
 const sites = ref([])
@@ -129,16 +132,16 @@ const selectSite = async (siteId) => {
   currentStep.value++
   console.log(projects)
 }
-const issues = ref(null)
+let issues = reactive([])
 const sprintKey = ref('')
-const appliedFilters = ref([])
+const route = useRoute()
 const selectProject = async (projectKey) => {
   selectedProject.value = projectKey
   const issuesObj = await getIssues(projectKey)
-  issues.value = issuesObj.issues
+  issues = reactive([...issuesObj.issues])
   sprintKey.value = issuesObj.sprintKey
   currentStep.value++
-  initFilters(issues.value)
+  initFilters(issues)
 }
 const allSprints = ref([])
 const allStatus = ref([])
@@ -152,7 +155,7 @@ const initFilters = (issues) => {
   allStatus.value = new Set(issues.map((issue) => issue.fields.status.name))
 }
 const filteredIssues = computed(() => {
-  return issues.value.filter(
+  return issues.filter(
     (issue) =>
       !inactiveSprints.includes(issue.fields[sprintKey.value][0].name) &&
       !inactiveStatus.includes(issue.fields.status.name)
@@ -178,6 +181,26 @@ const toggleIssue = (issueKey) => {
   } else {
     inactiveIssues.push(issueKey)
   }
+}
+const addSelectedIssuesToGame = async () => {
+  const selectedIssues = filteredIssues.value.filter(
+    (issue) => !inactiveIssues.includes(issue.key)
+  )
+  await addMultipleRoundsToGame(
+    route.query.id,
+    selectedIssues.map((issue) => {
+      return {
+        name: `${issue.key} - ${issue.fields.summary}`,
+        status: 'pending',
+        jira: {
+          issueKey: issue.key,
+        },
+        votes: [],
+      }
+    })
+  )
+
+  console.log(selectedIssues)
 }
 </script>
 

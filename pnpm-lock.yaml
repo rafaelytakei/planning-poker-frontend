@@ -27,6 +27,7 @@ specifiers:
   vue-loading-overlay: ^4.0.3
   vue-multiselect: ^3.0.0-alpha.2
   vue-router: ^4.0.10
+  vuedraggable: ^4.0.3
   vuex: ^4.0.2
   vuex-persistedstate: ^4.0.0-beta.3
   windicss: ^3.1.4
@@ -42,6 +43,7 @@ dependencies:
   vue: 3.1.4
   vue-loading-overlay: 4.0.3_vue@3.1.4
   vue-multiselect: 3.0.0-alpha.2
+  vuedraggable: 4.0.3_vue@3.1.4
   vuex: 4.0.2_vue@3.1.4
   vuex-persistedstate: 4.0.0-beta.3_vuex@4.0.2
 
@@ -2073,6 +2075,10 @@ packages:
       is-fullwidth-code-point: 3.0.0
     dev: true
 
+  /sortablejs/1.10.2:
+    resolution: {integrity: sha512-YkPGufevysvfwn5rfdlGyrGjt7/CRHwvRPogD/lC+TnvcN29jDpCifKP+rBqf+LRldfXSTh+0CGLcSg0VIxq3A==}
+    dev: false
+
   /source-map-js/0.6.2:
     resolution: {integrity: sha512-/3GptzWzu0+0MBQFrDKzw/DvvMTUORvgY6k6jd/VS6iCR4RDTKWH6v6WPwQoUO8667uQEf9Oe38DxAYWY5F/Ug==}
     engines: {node: '>=0.10.0'}
@@ -2374,6 +2380,15 @@ packages:
       '@vue/compiler-dom': 3.1.4
       '@vue/runtime-dom': 3.1.4
       '@vue/shared': 3.1.4
+
+  /vuedraggable/4.0.3_vue@3.1.4:
+    resolution: {integrity: sha512-NkJYk+UyxgEoSQcgvVZtqY6dYpdXkBHS8aq6CqoJAfXVM9ZRYT0WPdlBbTttG4nCwllU2M5JGGgo9Drt/L0a7w==}
+    peerDependencies:
+      vue: ^3.0.1
+    dependencies:
+      sortablejs: 1.10.2
+      vue: 3.1.4
+    dev: false
 
   /vuex-persistedstate/4.0.0-beta.3_vuex@4.0.2:
     resolution: {integrity: sha512-T4IRD27qoUWh+8qr6T6zVp15xO7x/nPgnU13OD0C2uUwA7U9PhGozrj6lvVmMYDyRgc36J0msMXn3GvwHjkIhA==}
