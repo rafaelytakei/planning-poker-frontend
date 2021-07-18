@@ -71,7 +71,7 @@ const roundsRef = db
   .orderByChild('order')
 
 roundsRef.on('value', (snapshot) => {
-  updateRounds(snapshot.val())
+  if (snapshot.val()) updateRounds(snapshot.val())
 })
 
 // const initRounds = (gameInfo) => {

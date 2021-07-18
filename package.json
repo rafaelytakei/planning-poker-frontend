@@ -16,10 +16,11 @@
     "await-to-js": "^3.0.0",
     "axios": "^0.21.1",
     "firebase": "^8.7.1",
-    "firebaseui": "^4.8.0",
+    "firebaseui": "^4.8.1",
     "js-cookie": "^2.2.1",
+    "lottie-web": "^5.7.12",
     "tailwindcss-ripple": "^0.7.1",
-    "vue": "^3.1.4",
+    "vue": "^3.1.5",
     "vue-loading-overlay": "^4.0.3",
     "vue-multiselect": "^3.0.0-alpha.2",
     "vuedraggable": "^4.0.3",
@@ -27,22 +28,22 @@
     "vuex-persistedstate": "^4.0.0-beta.3"
   },
   "devDependencies": {
-    "@iconify/json": "^1.1.372",
-    "@vitejs/plugin-vue": "^1.2.4",
-    "@vue/compiler-sfc": "^3.1.4",
+    "@iconify/json": "^1.1.377",
+    "@vitejs/plugin-vue": "^1.2.5",
+    "@vue/compiler-sfc": "^3.1.5",
     "@vue/eslint-config-prettier": "^6.0.0",
     "eslint": "^7.30.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-vue": "^7.13.0",
     "prettier": "^2.3.2",
-    "vite": "^2.4.1",
+    "vite": "^2.4.2",
     "vite-plugin-components": "^0.12.2",
     "vite-plugin-fonts": "^0.2.2",
     "vite-plugin-icons": "^0.6.5",
-    "vite-plugin-pages": "^0.14.9",
+    "vite-plugin-pages": "^0.15",
     "vite-plugin-vue-layouts": "^0.3.1",
     "vite-plugin-windicss": "^1.2.4",
     "vue-router": "^4.0.10",
-    "windicss": "^3.1.4"
+    "windicss": "^3.1.5"
   }
 }

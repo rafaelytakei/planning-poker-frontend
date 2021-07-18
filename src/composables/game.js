@@ -18,6 +18,14 @@ export const createGame = async (
     cards,
   }
   const newGameKey = db.ref().child('games').push(newGame).key
+  console.log(`New game created with key ${newGameKey}`)
+  const [err] = await to(
+    db.ref(`/users/${user.value.uid}/ownedGames/${newGameKey}`).set(true)
+  )
+  if (err) {
+    console.log(err)
+    return
+  }
   return newGameKey
 }
 
@@ -110,4 +118,19 @@ export const changeRoundsOrder = (
   updates[`${roundAId}/order`] = newRoundAOrder
   updates[`${roundBId}/order`] = newRoundBOrder
   db.ref(`/games/${gameId}/rounds/`).update(updates)
+}
+
+export const getUserGames = async (userUid) => {
+  const userGamesRef = db.ref(`/users/${userUid}/ownedGames`)
+  const [err, snapshot] = await to(userGamesRef.get())
+  if (err) {
+    console.log('Error retrieving owned games')
+    return
+  }
+  if (!snapshot.exists()) return []
+  const gamesIds = Object.keys(snapshot.val())
+  const games = await Promise.all(
+    gamesIds.map(async (gameId) => await getGameInfo(gameId))
+  )
+  return games
 }
